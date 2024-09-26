@@ -32,7 +32,6 @@ class VelocityVerletIntegrator(Integrator):
         
         q_new = q_old + v_old * self.dt + 0.5 * forces_old * self.dt**2
         
-        #forces, potential = Forces_Potential.forces_from_fes_surface(self.path, q_new)
         forces, potential = forces_potential_object(self.forcefield_name, q_new) 
         
         v_new = v_old + (forces + forces_old)/2 * self.dt
@@ -49,7 +48,7 @@ class LangevinIntegrator(Integrator):
         self.beta = beta
         self.masses = masses
         self.alpha = np.exp(-1*self.friction * self.dt) 
-        self.noise_scale = np.sqrt(self.beta*(1-self.alpha**2)/self.masses)
+        self.noise_scale = np.sqrt((1-self.alpha**2)/(self.masses*self.beta))
         self.forcefield_name = forcefield_name
 
     def make_a_step(self, q_old, v_old, forces_old):
@@ -78,7 +77,7 @@ class LangevinIntegratorBAOAB(Integrator):
         self.beta = beta
         self.masses = masses
         self.alpha = np.exp(-self.friction * self.dt)
-        self.noise_scale = np.sqrt(self.beta*(1-self.alpha**2)/self.masses)
+        self.noise_scale = np.sqrt((1-self.alpha**2)/(self.masses*self.beta))
         self.forcefield_name = forcefield_name
         
     
