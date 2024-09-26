@@ -1,0 +1,12 @@
+integrator:
+  class_path: integrators.LangevinIntegratorBAOAB
+  init_args:
+    dt: 0.01
+    friction: 1
+    T: 1 
+    masses: 1 
+    forcefield_name: 'fes' 
+n_steps: 100000
+q_init: 8
+stride: 100
+forcefield_name: 'fes'
