@@ -6,6 +6,7 @@ from typing import Union, Optional
 from numba import njit
 from forces import forces_potential_object
 import time
+from tqdm import tqdm
 
 class Simulation():
 
@@ -15,10 +16,9 @@ class Simulation():
     def run_sim(self, n_steps, stride, q_init, forcefield_name, v_init = Optional[float], sigv = 1, ncoll = 0):
         
         #define initial state 
-        q_traj = []
-        v_traj = []
-        #u_traj = []
 
+        q_traj = np.zeros(n_steps)
+        v_traj = np.zeros(n_steps)
 
         #define initial positions and velocities 
         q = q_init
@@ -38,21 +38,27 @@ class Simulation():
         
         start = time.time()
 
-        for i in range(n_steps):
+        for i in tqdm(range(n_steps), desc = 'simulation timestep'):
             if (i%(n_steps/10) == 0):
                 print('iteration ',i/(n_steps/10))
             
-            expdist = np.random.random(stride) > cut
-            for k in range(stride):
-                q, v, forces, potential = self.integrator.make_a_step(q, v, forces)
+            expdist = np.random.random(n_steps) > cut
             
-                # Test for a collision occurance
-                if expdist[k]:
-                    ncoll = ncoll+1
-                    v = np.random.normal(loc=0,scale=sigv)
+            q, v, forces, potential = self.integrator.make_a_step(q, v, forces)
             
-            q_traj.append(q)
-            v_traj.append(v)
+            # Test for a collision occurance
+            if expdist[i]:
+                ncoll = ncoll+1
+                v = np.random.normal(loc=0,scale=sigv)
+            
+            # save to arrays if relevant
+            if i % stride == 0:
+                q_traj[i] = q
+                v_traj[i] = v
+                # save arrays
+                np.save('q_traj', q_traj)
+                np.save('v_traj', v_traj)
+        
 
         end = time.time() 
         print("Elapsed Langevin loop = %s" % (end - start))   
