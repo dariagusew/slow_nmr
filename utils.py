@@ -1,8 +1,6 @@
 import numpy as np
-from sympy import *
 from typing import Optional
 from scipy.interpolate import interp1d, CubicSpline
-from numba import njit
 
 class Forces_Potential():
     def V_chandler(q, params = dict):

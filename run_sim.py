@@ -7,8 +7,6 @@ from typing import Dict, Optional, Callable, Union
 from time import ctime
 from types import NoneType
 import numpy as np
-from numba import njit
-
 
 def run_sim(integrator: Integrator, 
             n_steps: int,

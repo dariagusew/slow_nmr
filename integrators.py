@@ -3,7 +3,6 @@ import sys
 from utils import Forces_Potential
 from forces import forces_potential_object
 from typing import Dict, Optional, Callable
-from numba import njit
 import time 
 
 class Integrator():

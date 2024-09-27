@@ -3,7 +3,6 @@ import sys
 from utils import Forces_Potential
 from typing import Dict, Optional, Callable
 from typing import Union, Optional
-from numba import njit
 from forces import forces_potential_object
 import time
 from tqdm import tqdm

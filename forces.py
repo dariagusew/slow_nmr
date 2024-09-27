@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.interpolate import CubicSpline
-from numba import njit
 
 
 def F_V_chandler(q, params = dict):
@@ -84,5 +83,5 @@ def forces_potential_object(forcefield_name, q):
         return F_V_chandler(q, params)
     
     if forcefield_name == 'fes':
-        path = '/Users/zvh378/Downloads/fes_667.dat' 
+        path = '/projects/dynaplix/people/zvh378/software/slow_nmr/forcefields/fes_667.dat' 
         return forces_from_fes_surface(q, path)
