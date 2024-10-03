@@ -19,7 +19,7 @@ def run_sim(integrator: Integrator,
 
     simulation = Simulation(int)
    
-    q_traj, v_traj = simulation.run_sim(n_steps, stride, q_init, forcefield_name, v_init)
+    q_traj, v_traj, forces = simulation.run_sim(n_steps, stride, q_init, forcefield_name, v_init)
 
 
 
