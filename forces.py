@@ -71,7 +71,7 @@ def forces_from_fes_surface(q, path):
     cs = CubicSpline(rc, pot)
 
     potential_on_q  = cs(q)
-    forces_on_q = cs(q, 1)
+    forces_on_q = -cs(q, 1)
 
     return forces_on_q, potential_on_q 
 
