@@ -22,9 +22,6 @@ def run_sim(integrator: Integrator,
     q_traj, v_traj = simulation.run_sim(n_steps, stride, q_init, forcefield_name, v_init)
 
 
-    np.save('q_traj.npy',q_traj)
-    np.save('v_traj.npy',v_traj)
-
 
 if __name__ == "__main__":
     print("Start run_sim.py: {}".format(ctime()))
