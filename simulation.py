@@ -14,16 +14,17 @@ class Simulation():
         
     def run_sim(self, n_steps, stride, q_init, forcefield_name, v_init = Optional[float], sigv = 1, ncoll = 0):
         
-        #define initial state 
-
-        q_traj = np.zeros(n_steps)
-        v_traj = np.zeros(n_steps)
-
         #define initial positions and velocities 
         q = q_init
 
         v_init = np.random.normal(loc=0,scale=sigv)
         v = v_init
+
+        #define initial state 
+
+        q_traj = [q_init]
+        v_traj = [v_init]
+        forces_traj = []
 
         start = time.time()
         forces, potential = forces_potential_object(forcefield_name, q)
@@ -33,13 +34,14 @@ class Simulation():
 
         #collision rate is pjump/delt
         pjump = 0.025
+        ncoll = 0
         cut = np.exp(-pjump)
         
         start = time.time()
 
         for i in tqdm(range(n_steps), desc = 'simulation timestep'):
-            if (i%(n_steps/10) == 0):
-                print('iteration ',i/(n_steps/10))
+            #if (i%(n_steps/10) == 0):
+             #   print('iteration ',i/(n_steps/10))
             
             expdist = np.random.random(n_steps) > cut
             
@@ -52,14 +54,16 @@ class Simulation():
             
             # save to arrays if relevant
             if i % stride == 0:
-                q_traj[i] = q
-                v_traj[i] = v
+                q_traj.append(q)
+                v_traj.append(v)
+                forces_traj.append(forces)
                 # save arrays
                 np.save('q_traj', q_traj)
                 np.save('v_traj', v_traj)
+                np.save('f_traj', forces_traj)
         
 
         end = time.time() 
         print("Elapsed Langevin loop = %s" % (end - start))   
 
-        return q_traj, v_traj
+        return q_traj, v_traj, forces
