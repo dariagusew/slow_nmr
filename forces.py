@@ -83,5 +83,5 @@ def forces_potential_object(forcefield_name, q):
         return F_V_chandler(q, params)
     
     if forcefield_name == 'fes':
-        path = '/projects/dynaplix/people/zvh378/software/slow_nmr/forcefields/fes_667.dat' 
+        path = '/Users/zvh378/Desktop/Projects/2024/slow_nmr/forcefields/fes_667.dat' 
         return forces_from_fes_surface(q, path)

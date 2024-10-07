@@ -12,20 +12,45 @@ class Simulation():
     def __init__(self, integrator):
         self.integrator = integrator
         
-    def run_sim(self, n_steps, stride, q_init, forcefield_name, v_init = Optional[float], sigv = 1, ncoll = 0):
+    def run_sim(self, n_steps, stride, forcefield_name, q_init = Optional[float],  v_init = Optional[float], last_ckpt = bool, sigv = 1, ncoll = 0):
         
         #define initial positions and velocities 
-        q = q_init
+        
+        if last_ckpt == False:
+            q = q_init
+            v_init = np.random.normal(loc=0,scale=sigv)
+            v = v_init
+        else:
+            q_last = np.load('q_last.npy')
+            q = q_last
+            v_last = np.load('v_last.npy')
+            v = v_last  
 
-        v_init = np.random.normal(loc=0,scale=sigv)
-        v = v_init
+
+            #if q_init is not None:
+                #q = q_init
+            #else:
+             #   q_last = np.load('q_last.npy')
+             #   q = q_last        
+        
+            #if v_init is None:
+            #    v_init = np.random.normal(loc=0,scale=sigv)
+            #    v = v_init
+            #else:
+            #    v = v_last
+        
 
         #define initial state 
+        if 'last_ckpt' == False:
+            q_traj = [q_init]
+            v_traj = [v_init]
+            forces_traj = []
+        else:
+            q_traj = []
+            v_traj = []
+            forces_traj = []
 
-        q_traj = [q_init]
-        v_traj = [v_init]
-        forces_traj = []
-
+        
         start = time.time()
         forces, potential = forces_potential_object(forcefield_name, q)
         end = time.time()
@@ -57,12 +82,19 @@ class Simulation():
                 q_traj.append(q)
                 v_traj.append(v)
                 forces_traj.append(forces)
-                # save arrays
+            
+            # save arrays
+            if last_ckpt == False:
                 np.save('q_traj', q_traj)
                 np.save('v_traj', v_traj)
                 np.save('f_traj', forces_traj)
+            else:
+                np.save('q_traj_ckpt', q_traj)
+                np.save('v_traj_ckpt', v_traj)
+                np.save('f_traj_ckpt', forces_traj) 
         
-
+        np.save('q_last.npy',q_traj[-1])
+        np.save('v_last.npy',v_traj[-1])      
         end = time.time() 
         print("Elapsed Langevin loop = %s" % (end - start))   
 
