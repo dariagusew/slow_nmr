@@ -14,7 +14,7 @@ class Simulation():
         
     def run_sim(self, n_steps, stride, q_init, forcefield_name, v_init = Optional[float], sigv = 1, ncoll = 0):
         
-        #define initial positions and velocities 
+        #define initial positions and velocities e
         q = q_init
 
         v_init = np.random.normal(loc=0,scale=sigv)
