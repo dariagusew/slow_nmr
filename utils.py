@@ -149,3 +149,10 @@ class Forces_Potential():
     def double_well(q,a):
         """(x_1^2 - 1)^2 + x_2^2."""
         return (q**2 - a**2)**2 
+
+def initialize_velocities(T):
+    v = np.random.normal(loc=0,scale=np.sqrt(1.0*T))
+    v_mean = np.mean(v)
+    v = v - v_mean
+    assert np.all(np.isclose(np.mean(v, axis=0), 0.0))
+    return v
