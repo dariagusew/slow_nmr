@@ -46,9 +46,9 @@ class Simulation():
             v_traj = [v_init]
             forces_traj = []
         else:
-            q_traj = []
-            v_traj = []
-            forces_traj = []
+            q_traj = np.zeros(n_steps // stride)
+            v_traj = np.zeros(n_steps // stride)
+            forces_traj = np.zeros(n_steps // stride)
 
         
         start = time.time()
@@ -79,9 +79,13 @@ class Simulation():
             
             # save to arrays if relevant
             if i % stride == 0:
-                q_traj.append(q)
-                v_traj.append(v)
-                forces_traj.append(forces)
+                q_traj[(i - 1) // stride] = q
+                v_traj[(i - 1) // stride] = v
+                forces_traj[(i - 1) // stride] = forces
+            #if i % stride == 0:
+                #q_traj.append(q)
+                #v_traj.append(v)
+                #forces_traj.append(forces)
             
             # save arrays
             if last_ckpt == False:

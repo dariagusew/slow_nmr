@@ -47,7 +47,7 @@ class LangevinIntegrator(Integrator):
         self.beta = beta
         self.masses = masses
         self.alpha = np.exp(-1*self.friction * self.dt) 
-        self.noise_scale = np.sqrt((1-self.alpha**2)/(self.masses*self.beta))
+        self.noise_scale = np.sqrt((1-self.alpha**2)*(self.masses)/(self.beta))
         self.forcefield_name = forcefield_name
 
     def make_a_step(self, q_old, v_old, forces_old):
@@ -76,7 +76,7 @@ class LangevinIntegratorBAOAB(Integrator):
         self.beta = beta
         self.masses = masses
         self.alpha = np.exp(-self.friction * self.dt)
-        self.noise_scale = np.sqrt((1-self.alpha**2)/(self.masses*self.beta))
+        self.noise_scale = np.sqrt((1-self.alpha**2)*(self.masses)/(self.beta))
         self.forcefield_name = forcefield_name
         
     
