@@ -7,6 +7,7 @@ from forces import forces_potential_object
 import time
 from tqdm import tqdm
 
+
 class Simulation():
 
     def __init__(self, integrator):
