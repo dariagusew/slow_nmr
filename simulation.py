@@ -13,7 +13,6 @@ def force_object(q, spl_m, rc, rc_start):
     # find index of bin by shifting by the start of
     # the first bin and floor dividing
     idx = int((q - rc_start) // width)
-    print(idx)
     # set gradient of the free energy beyond the borders
     # to the value at the border
     if idx < 0:
@@ -59,7 +58,7 @@ def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, rc, rc_start
     #forces = force_object(q, spl_m)
     forces = force_object(q, spl_m, rc, rc_start)
 
-    for step in tqdm(range(n_steps), desc = 'simulation timestep'):
+    for step in range(n_steps):
         
         expdist = np.random.random(n_steps) > cut
 
@@ -85,9 +84,5 @@ def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, rc, rc_start
             q_traj[(step - 1) // stride] = q_new
             v_traj[(step - 1) // stride] = v_new
             forces_traj[(step - 1) // stride] = forces_new
-        
-        np.save('q_traj', q_traj)
-        np.save('v_traj', v_traj)
-        np.save('f_traj', forces_traj)
 
     return q_traj, v_traj, forces_traj

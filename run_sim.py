@@ -23,7 +23,7 @@ def run_sim(n_steps: int,
 
     
    
-    q_traj, v_traj, forces = sim(q_init=q_init,
+    q_traj, v_traj, f_traj = sim(q_init=q_init,
                                  friction=friction,
                                  masses=masses,
                                  beta=beta,
@@ -34,7 +34,9 @@ def run_sim(n_steps: int,
                                  rc=rc,
                                  rc_start=rc_start)
 
-
+    np.save('q_traj', q_traj)
+    np.save('v_traj', v_traj)
+    np.save('f_traj', f_traj)
 
 if __name__ == "__main__":
     print("Start run_sim.py: {}".format(ctime()))
