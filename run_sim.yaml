@@ -1,0 +1,8 @@
+n_steps: 100
+q_init: 8
+stride: 1
+dt: 0.01
+friction: 1
+beta: 0.1 
+masses: 1 
+fes_path: /Users/zvh378/Desktop/Projects/2024/slow_nmr/t4l_fes.npy
