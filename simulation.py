@@ -4,14 +4,35 @@ import scipy
 from numba_progress import ProgressBar
 from tqdm import tqdm
 
-def force_object(q, spl_m):
+@njit
+def force_object(q, spl_m, rc, rc_start):
+    """ Evaluates the spline representation of the potential at x, returns the negativ
+        gradient of the splines. Evaluates to value at the border beyond the border.  """
 
-    forces_on_q = -spl_m(q, 1)
+    width = np.mean(rc[1:] - rc[:-1])
+    # find index of bin by shifting by the start of
+    # the first bin and floor dividing
+    idx = int((q - rc_start) // width)
+    print(idx)
+    # set gradient of the free energy beyond the borders
+    # to the value at the border
+    if idx < 0:
+        idx = 0
+        q = rc_start
+    elif idx > len(rc) - 2:
+        idx = len(rc) - 2
+        q = rc[0] + (len(rc) - 1) * width
+    # evaluate the gradient of the spline rep
+    output = -(
+        3 * spl_m[idx, 0] * (q - rc[idx]) ** 2
+        + 2 * spl_m[idx, 1] * (q - rc[idx])
+        + spl_m[idx, 2]
+    )
+    return output
 
-    return forces_on_q
 
-
-def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, sigv=1):
+@njit
+def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, rc, rc_start, sigv=1):
         
     #define initial positions and velocities 
     q = q_init
@@ -24,7 +45,6 @@ def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, sigv=1):
 
     noise = np.random.normal(loc = 0, scale = sigv) 
     
-
     #define initial state 
     q_traj = np.zeros(n_steps // stride)
     v_traj = np.zeros(n_steps // stride)
@@ -36,7 +56,8 @@ def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, sigv=1):
     ncoll = 0
     cut = np.exp(-pjump)
 
-    forces = force_object(q, spl_m)
+    #forces = force_object(q, spl_m)
+    forces = force_object(q, spl_m, rc, rc_start)
 
     for step in tqdm(range(n_steps), desc = 'simulation timestep'):
         
@@ -46,7 +67,8 @@ def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, sigv=1):
         
         q_new = q + v_new * dt 
     
-        forces_new = force_object(q_new, spl_m)
+        #forces_new = force_object(q_new, spl_m)
+        forces_new = force_object(q_new, spl_m, rc, rc_start)
 
         q = q_new
         v = v_new

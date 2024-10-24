@@ -4,11 +4,6 @@ import scipy
 from simulation import sim
 from time import ctime
 
-
-#run_sim(q_init=q_init,friction=1,masses=mass,beta=0.4,dt=dt,n_steps=n_steps,stride=stride,spl_m=spl_m,values=rc,width=width)
-#run_sim(q_init=q_init,friction=0.5,masses=mass,beta=0.4,dt=dt,n_steps=n_steps,stride=stride,spl_m=spl_m)
-
-
 def run_sim(n_steps: int,
             stride: int,  
             fes_path: str,
@@ -21,8 +16,10 @@ def run_sim(n_steps: int,
     
     fes = np.load(fes_path)
     rc = fes[:,0]
+    rc_start = rc[0] 
     pot = fes[:,1]
-    spl_m = scipy.interpolate.CubicSpline(rc, pot)
+    cs = scipy.interpolate.CubicSpline(rc, pot)
+    spl_m = cs.c.T
 
     
    
@@ -33,7 +30,9 @@ def run_sim(n_steps: int,
                                  dt=dt,
                                  n_steps=n_steps,
                                  stride=stride,
-                                 spl_m=spl_m)
+                                 spl_m=spl_m,
+                                 rc=rc,
+                                 rc_start=rc_start)
 
 
 
