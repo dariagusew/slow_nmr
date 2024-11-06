@@ -21,7 +21,9 @@ def run_sim(n_steps: int,
     cs = scipy.interpolate.CubicSpline(rc, pot)
     spl_m = cs.c.T
 
-    
+    alpha = np.exp(-1*friction * dt) 
+    noise_scale = np.sqrt((1-alpha*alpha)*masses/(beta))
+
    
     q_traj, v_traj, f_traj = sim(q_init=q_init,
                                  friction=friction,
@@ -32,7 +34,9 @@ def run_sim(n_steps: int,
                                  stride=stride,
                                  spl_m=spl_m,
                                  rc=rc,
-                                 rc_start=rc_start)
+                                 rc_start=rc_start,
+                                 alpha = alpha, 
+                                 noise_scale= noise_scale)
 
     np.save('q_traj', q_traj)
     np.save('v_traj', v_traj)
@@ -40,7 +44,7 @@ def run_sim(n_steps: int,
 
 if __name__ == "__main__":
     print("Start run_sim.py: {}".format(ctime()))
-
+    
     CLI(run_sim)
 
     print("Finish run_sim.py: {}".format(ctime()))

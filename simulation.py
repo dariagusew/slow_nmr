@@ -1,8 +1,5 @@
 import numpy as np
 from numba import njit
-import scipy
-from numba_progress import ProgressBar
-from tqdm import tqdm
 
 @njit
 def force_object(q, spl_m, rc, rc_start):
@@ -29,60 +26,41 @@ def force_object(q, spl_m, rc, rc_start):
     )
     return output
 
-
 @njit
-def sim(q_init, friction, masses, beta, dt, n_steps, stride, spl_m, rc, rc_start, sigv=1):
+def make_a_step(q_old, v_old, forces_old, dt, friction, spl_m, rc, rc_start, alpha, noise_scale):
+    
+    noise = np.random.normal(loc = 0, scale=1) 
+
+    v_new = v_old * alpha + forces_old * (1-alpha)*friction + noise_scale * noise  
+        
+    q_new = q_old + v_new * dt 
+    
+    forces = force_object(q_new, spl_m, rc, rc_start) 
+
+    return q_new, v_new, forces 
+
+@njit 
+def run_sim(n_steps, friction, dt, stride, q_init, spl_m, rc, rc_start, alpha, noise_scale):
         
     #define initial positions and velocities 
     q = q_init
-
     v_init = np.random.normal(loc=0,scale=1)
     v = v_init
 
-    alpha = np.exp(-1*friction * dt) 
-    noise_scale = np.sqrt((1-alpha*alpha)*masses/beta)
-
-    noise = np.random.normal(loc = 0, scale = sigv) 
-    
     #define initial state 
-    q_traj = np.zeros(n_steps // stride)
-    v_traj = np.zeros(n_steps // stride)
-    forces_traj = np.zeros(n_steps // stride)
+    q_traj = np.zeros(n_steps // stride, dtype = np.float32)
+    v_traj = np.zeros(n_steps // stride, dtype = np.float32)
+    forces_traj = np.zeros(n_steps // stride, dtype = np.float32)
 
-        
-    #collision rate is pjump/delt
-    pjump = 0.025
-    ncoll = 0
-    cut = np.exp(-pjump)
-
-    #forces = force_object(q, spl_m)
     forces = force_object(q, spl_m, rc, rc_start)
 
     for step in range(n_steps):
-        
-        expdist = np.random.random(n_steps) > cut
 
-        v_new = v * alpha + forces * (1-alpha) * friction + noise_scale * noise  
-        
-        q_new = q + v_new * dt 
-    
-        #forces_new = force_object(q_new, spl_m)
-        forces_new = force_object(q_new, spl_m, rc, rc_start)
-
-        q = q_new
-        v = v_new
-        forces = forces_new
-        
-        #q, v, forces, potential = self.integrator.make_a_step(q, v, forces)
-            
-        # Test for a collision occurance
-        if expdist[step]:
-            ncoll = ncoll+1
-            v = np.random.normal(loc=0,scale=sigv)
+        q, v, forces = make_a_step(q, v, forces, dt, friction, spl_m, rc, rc_start, alpha, noise_scale)
 
         if step % stride == 0:
-            q_traj[(step - 1) // stride] = q_new
-            v_traj[(step - 1) // stride] = v_new
-            forces_traj[(step - 1) // stride] = forces_new
+            q_traj[step // stride] = q
+            v_traj[step // stride] = v
+            forces_traj[step // stride] = forces
 
     return q_traj, v_traj, forces_traj
