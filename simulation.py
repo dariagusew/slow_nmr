@@ -40,7 +40,7 @@ def make_a_step(q_old, v_old, forces_old, dt, friction, spl_m, rc, rc_start, alp
     return q_new, v_new, forces 
 
 @njit 
-def run_sim(n_steps, friction, dt, stride, q_init, spl_m, rc, rc_start, alpha, noise_scale):
+def sim(n_steps, friction, dt, stride, q_init, spl_m, rc, rc_start, alpha, noise_scale):
         
     #define initial positions and velocities 
     q = q_init
