@@ -26,6 +26,33 @@ def force_object(q, spl_m, rc, rc_start):
     )
     return output
 
+@njit   
+def make_a_BAOAB_step(q_old, v_old, forces_old, dt, spl_m, rc, rc_start, alpha, noise_scale, masses=1):
+    """Langevin Integrator with BAOAB scheme https://doi.org/10.1007/978-3-319-16375-8_ is used, where::
+
+        B = deterministic velocity update
+        A = deterministic position update
+        O = stochastic velocity update
+    """
+        
+    #B
+    v_new = v_old + 0.5*dt/masses * forces_old 
+    #A
+    q_new = q_old + 0.5*dt*v_new
+    #O
+    noise = np.random.normal(loc = 0, scale=1) 
+        
+    v_new = alpha * v_new + noise_scale * noise 
+    #A
+    q_new = q_new + 0.5 * dt * v_new
+    #B
+        
+    forces = force_object(q_new, spl_m, rc, rc_start)     
+    
+    v_new = v_new + 0.5 * dt/masses * forces 
+
+    return q_new, v_new, forces
+
 @njit
 def make_a_step(q_old, v_old, forces_old, dt, friction, spl_m, rc, rc_start, alpha, noise_scale):
     
@@ -48,15 +75,15 @@ def sim(n_steps, friction, dt, stride, q_init, spl_m, rc, rc_start, alpha, noise
     v = v_init
 
     #define initial state 
-    q_traj = np.zeros(n_steps // stride, dtype = np.float32)
-    v_traj = np.zeros(n_steps // stride, dtype = np.float32)
-    forces_traj = np.zeros(n_steps // stride, dtype = np.float32)
+    q_traj = np.zeros(n_steps // stride)
+    v_traj = np.zeros(n_steps // stride)
+    forces_traj = np.zeros(n_steps // stride)
 
     forces = force_object(q, spl_m, rc, rc_start)
 
     for step in range(n_steps):
 
-        q, v, forces = make_a_step(q, v, forces, dt, friction, spl_m, rc, rc_start, alpha, noise_scale)
+        q, v, forces = make_a_BAOAB_step(q, v, forces, dt, spl_m, rc, rc_start, alpha, noise_scale)
 
         if step % stride == 0:
             q_traj[step // stride] = q

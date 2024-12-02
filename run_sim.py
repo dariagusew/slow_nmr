@@ -27,8 +27,6 @@ def run_sim(n_steps: int,
    
     q_traj, v_traj, f_traj = sim(q_init=q_init,
                                  friction=friction,
-                                 masses=masses,
-                                 beta=beta,
                                  dt=dt,
                                  n_steps=n_steps,
                                  stride=stride,
