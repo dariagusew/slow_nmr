@@ -2,10 +2,7 @@ import numpy as np
 import pandas as pd
 import mdtraj as md 
 from numba import njit
-from scipy.optimize import curve_fit
-from slow_nmr.autocorelation import ACFfft, threeexp
 
-@njit
 def traj_loader(traj_path, dt, stride):
     
     traj  = np.load(traj_path)[::stride]
@@ -80,10 +77,10 @@ def q_to_chem_shift_mapping(traj_path, ref_path, w_mean_path, dt, stride, save='
 
 
 
-def R_CPMG(pars,tau_ex,tau_cpmg):
-    
-    Rex = pars[0]*pars[1]+pars[2]*pars[3]+pars[4]*pars[5]
-
-    R_cpmg = Rex*(1-(tau_ex/tau_cpmg)*np.tanh(tau_cpmg/tau_ex))
-    
-    return R_cpmg, Rex
+#def R_CPMG(pars,tau_ex,tau_cpmg):
+#
+#Rex = pars[0]*pars[1]+pars[2]*pars[3]+pars[4]*pars[5]
+#
+#R_cpmg = Rex*(1-(tau_ex/tau_cpmg)*np.tanh(tau_cpmg/tau_ex))
+#
+#return R_cpmg, Rex
