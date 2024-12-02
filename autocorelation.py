@@ -1,8 +1,7 @@
 import numpy as np 
 from numba import njit
 from scipy.optimize import curve_fit
-from autocorelation import ACFfft, threeexp
-from utils import traj_loader
+from slow_nmr.utils import traj_loader
 
 
 @njit

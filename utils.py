@@ -3,7 +3,7 @@ import pandas as pd
 import mdtraj as md 
 from numba import njit
 from scipy.optimize import curve_fit
-from autocorelation import ACFfft, threeexp
+from slow_nmr.autocorelation import ACFfft, threeexp
 
 @njit
 def traj_loader(traj_path, dt, stride):

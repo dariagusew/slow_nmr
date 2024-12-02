@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from slow_nmr.utils import traj_loader, energy1d,  q_to_chem_shift_mapping
+from slow_nmr.autocorelation import calc_acf
 import scienceplots
 plt.style.use(['science','no-latex'])
-from .utils import traj_loader, energy1d,  q_to_chem_shift_mapping, calc_acf
 
 
 def plot_traj(traj_path,dt, stride, save_fig ='no'):

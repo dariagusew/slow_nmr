@@ -1,7 +1,7 @@
 from jsonargparse import CLI
 import numpy as np
 import scipy
-from simulation import sim
+from slow_nmr.simulation import sim
 from time import ctime
 
 def run_sim(n_steps: int,
