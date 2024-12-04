@@ -60,3 +60,26 @@ def plot_acf(ob_idx, traj_path, chem_shift_path, dt, stride, corrdim, corrstride
     if save_fig == 'yes':
         plt.savefig('acf.pdf',dpi=300)
     plt.show()
+
+
+def plot_convergence(traj_path, dt, stride):
+    _, traj  = traj_loader(traj_path, dt, stride)
+
+    n_plots = 10
+    fig, axs = plt.subplots(
+        nrows=int(n_plots / 5),
+        ncols=5,
+        tight_layout=True,
+        figsize=(15, int(n_plots / 5) * 3),
+    )
+    axs = np.ravel(axs)
+
+
+    n_frames = traj.shape[0]
+    n_frames_chunk = n_frames // n_plots
+    for i in range(n_plots):
+        axs[i].plot(energy1d(traj[i*n_frames_chunk:(i+1)*n_frames_chunk][1],bins=100))
+        axs[i].set_title(f"{10*i}-{10*(i+1)}%")
+        axs[i].set_xlabel("RMSD (nm)")
+        axs[i].set_ylabel("Q")
+    plt.tight_layout()

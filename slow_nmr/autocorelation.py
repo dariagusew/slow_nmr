@@ -71,13 +71,12 @@ def expprob(t,lam):
 
 
 
-@njit
-def calc_acf(ob_idx,traj_path,chem_shift_path, dt, stride, corrdim, corrstride):
+def calc_acf(ob_idx,traj_path,chem_shift, dt, stride, corrdim, corrstride):
 
     if ob_idx =='acf_q':
          _, ob  = traj_loader(traj_path, dt, stride)
     if ob_idx =='acf_w':
-         ob  = np.load(chem_shift_path)
+         ob  = chem_shift - np.mean(chem_shift)
     
     tauaxis= np.linspace(0,corrdim*dt*corrstride,corrdim)
 

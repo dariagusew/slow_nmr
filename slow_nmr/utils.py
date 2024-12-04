@@ -10,7 +10,7 @@ def traj_loader(traj_path, dt, stride):
 
     return time, traj 
 
-@njit
+
 def energy1d(traj, bins, T=298, R = 8.314*10**(-3)):
     
     hist, bins = np.histogram(traj,bins=bins,density=True)
@@ -40,19 +40,19 @@ def chem_shift_mean_maker(path_w, md_traj, md_top, ref_path,rc_path, res_idx, sa
     for i in range(len(ref[:,0])):
         idx.append(np.where((rc[:,1]<ref[:,0][i]) & (rc[:,1]>=ref[:,0][i]-fes_dt)))
     
-    w_mean_res = []
+    w_mean_res = np.zeros(len(idx))
+    
     for i in range(len(idx)):
-        w_mean_res.append(np.mean(chem_shift_res[idx[i]]))
+        w_mean_res[i]=np.mean(chem_shift_res[idx[i]])
 
     w_mean_res = np.array(w_mean_res)
     
     if save=='yes':
-        np.save("w_mean_res", w_mean_res)
+        np.save(f'w_mean_res_{res_idx}', w_mean_res)
 
     return w_mean_res
 
-@njit
-def q_to_chem_shift_mapping(traj_path, ref_path, w_mean_path, dt, stride, save='no'):
+def q_to_chem_shift_mapping(traj_path, ref_path, w_mean, dt, stride, save='no'):
 
     ref = np.load(ref_path)
     fes_dt = ref[:,0][1] - ref[:,0][0]
@@ -63,7 +63,7 @@ def q_to_chem_shift_mapping(traj_path, ref_path, w_mean_path, dt, stride, save='
     for i in range(len(ref[:,0])):
         idxq.append(np.where((traj<ref[:,0][i]) & (traj>=ref[:,0][i]-fes_dt)))
     
-    w_mean = np.load(w_mean_path)
+    w_mean = np.load(w_mean)
     
     chem_shift = np.zeros(traj.shape)
     
@@ -74,13 +74,3 @@ def q_to_chem_shift_mapping(traj_path, ref_path, w_mean_path, dt, stride, save='
         np.save(chem_shift,"chem_shift")
     
     return chem_shift
-
-
-
-#def R_CPMG(pars,tau_ex,tau_cpmg):
-#
-#Rex = pars[0]*pars[1]+pars[2]*pars[3]+pars[4]*pars[5]
-#
-#R_cpmg = Rex*(1-(tau_ex/tau_cpmg)*np.tanh(tau_cpmg/tau_ex))
-#
-#return R_cpmg, Rex
