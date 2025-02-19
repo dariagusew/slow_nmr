@@ -66,23 +66,21 @@ def twoexp(t,a1,tau1,a2,tau2):
 def threeexp(t,a1,tau1,a2,tau2,a3,tau3):
     return a1*np.exp(-t/tau1)+a2*np.exp(-t/tau2)+a3*np.exp(-t/tau3)
 
+def fourexp(t,a1,tau1,a2,tau2,a3,tau3,a4,tau4):
+    return a1*np.exp(-t/tau1)+a2*np.exp(-t/tau2)+a3*np.exp(-t/tau3)+a4*np.exp(-t/tau4)
+
 def expprob(t,lam):
     return lam*np.exp(-t*lam)
 
 
 
-def calc_acf(ob_idx,traj_path,chem_shift, dt, stride, corrdim, corrstride):
+def calc_acf(chem_shift, corrdim, corrstride):
 
-    if ob_idx =='acf_q':
-         _, ob  = traj_loader(traj_path, dt, stride)
-    if ob_idx =='acf_w':
-         ob  = chem_shift - np.mean(chem_shift)
-    
-    tauaxis= np.linspace(0,corrdim*dt*corrstride,corrdim)
+    ob  = chem_shift - np.mean(chem_shift)
 
     ACF = ACFfft(ob,corrdim,corrstride)
 
-    return tauaxis, ACF
+    return ACF
 
 def fit_acft(ACF, corrdim, dt, corrstride):
 
