@@ -83,7 +83,7 @@ def sim(n_steps, friction, dt, stride, q_init, spl_m, rc, rc_start, alpha, noise
 
     for step in range(n_steps):
 
-        q, v, forces = make_a_BAOAB_step(q, v, forces, dt, spl_m, rc, rc_start, alpha, noise_scale)
+        q, v, forces = make_a_step(q, v, forces, dt, friction, spl_m, rc, rc_start, alpha, noise_scale)
 
         if step % stride == 0:
             q_traj[step // stride] = q

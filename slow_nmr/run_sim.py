@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/projects/dynaplix/people/zvh378/software/')
 from jsonargparse import CLI
 import numpy as np
 import scipy
