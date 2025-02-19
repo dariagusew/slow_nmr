@@ -1,8 +1,8 @@
-n_steps: 100
-q_init: 8
+n_steps: 100000000
+q_init: 16
 stride: 1
-dt: 0.01
+dt: 0.03
 friction: 1
-beta: 0.1 
+beta: 0.4 
 masses: 1 
-fes_path: /Users/zvh378/Desktop/Projects/2024/slow_nmr/t4l_fes.npy
+fes_path: /projects/dynaplix/people/zvh378/software/slow_nmr/t4l_fes.npy
